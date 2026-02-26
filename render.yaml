@@ -4,7 +4,7 @@ services:
     env: elixir
     plan: free
     buildCommand: mix deps.get && mix assets.deploy && mix release
-    startCommand: bin/planora_live eval "PlanoraLive.Release.migrate" && bin/planora_live start
+    startCommand: _build/prod/rel/planora_live/bin/planora_live eval "PlanoraLive.Release.migrate" && _build/prod/rel/planora_live/bin/planora_live start
     envVars:
       - key: DATABASE_URL
         fromDatabase:
