@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
+/* ─── Reset & Base ─────────────────────────────────────────────── */
 *,
 *::before,
 *::after {
@@ -39,6 +40,7 @@ body {
   padding: 32px 16px;
 }
 
+/* ─── Auth ──────────────────────────────────────────────────────── */
 .auth-page {
   width: 100%;
   display: flex;
@@ -211,6 +213,7 @@ body {
   text-decoration: underline;
 }
 
+/* ─── App Wrapper ──────────────────────────────────────────────── */
 .app-wrapper {
   width: 100%;
   max-width: 900px;
@@ -225,6 +228,7 @@ body {
   border: 1px solid var(--border);
 }
 
+/* ─── Header ────────────────────────────────────────────────────── */
 .app-header {
   display: flex;
   align-items: center;
@@ -291,6 +295,7 @@ body {
   margin-bottom: 24px;
 }
 
+/* ─── Todo Form ─────────────────────────────────────────────────── */
 .todo-form {
   display: flex;
   flex-direction: column;
@@ -359,6 +364,7 @@ body {
   transform: translateY(-1px);
 }
 
+/* ─── Filter Bar ────────────────────────────────────────────────── */
 .filter-bar {
   display: flex;
   align-items: center;
@@ -426,6 +432,7 @@ body {
   border-radius: 4px;
 }
 
+/* ─── Todo List + Items ─────────────────────────────────────────── */
 .todo-list {
   display: flex;
   flex-direction: column;
@@ -638,6 +645,7 @@ body {
   transform: scale(1.1);
 }
 
+/* ─── Bottom Bar ────────────────────────────────────────────────── */
 .bottom-bar {
   display: flex;
   align-items: center;
@@ -672,6 +680,7 @@ body {
   cursor: not-allowed;
 }
 
+/* ─── Pagination ────────────────────────────────────────────────── */
 .pagination {
   display: flex;
   align-items: center;
@@ -709,6 +718,7 @@ body {
   cursor: not-allowed;
 }
 
+/* ─── Modal ─────────────────────────────────────────────────────── */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -813,6 +823,7 @@ body {
   transform: translateY(-1px);
 }
 
+/* ─── Toast ─────────────────────────────────────────────────────── */
 .toast {
   position: fixed;
   top: 24px;
@@ -868,6 +879,7 @@ body {
   opacity: 1;
 }
 
+/* ─── Favorites / Empty ─────────────────────────────────────────── */
 .fav-list {
   display: flex;
   flex-direction: column;
@@ -892,6 +904,7 @@ body {
   padding: 16px 0;
 }
 
+/* ─── Select wrapper ────────────────────────────────────────────── */
 .select-wrapper {
   position: relative;
 }
@@ -907,6 +920,7 @@ body {
   font-size: 0.8rem;
 }
 
+/* ─── Scrollbar ─────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -920,7 +934,9 @@ body {
   border-radius: 3px;
 }
 
+/* ═══════════════════════════════════════════════════════════════════
    LANDING PAGE — minimal
+   ═══════════════════════════════════════════════════════════════════ */
 
 body:has(.lp) {
   display: block;
@@ -935,6 +951,7 @@ body:has(.lp) {
   font-family: 'Inter', system-ui, sans-serif;
 }
 
+/* ── Nav ────────────────────────────────────────────────────────── */
 .lp-nav {
   display: flex;
   align-items: center;
@@ -971,6 +988,7 @@ body:has(.lp) {
   color: var(--primary);
 }
 
+/* ── Hero ───────────────────────────────────────────────────────── */
 .lp-hero {
   flex: 1;
   display: flex;
@@ -1011,6 +1029,7 @@ body:has(.lp) {
   margin-bottom: 36px;
 }
 
+/* ── CTA buttons ───────────────────────────────────────────────── */
 .lp-actions {
   display: flex;
   align-items: center;
@@ -1052,6 +1071,7 @@ body:has(.lp) {
   color: var(--primary);
 }
 
+/* ── Info chips ─────────────────────────────────────────────────── */
 .lp-chips {
   display: flex;
   gap: 10px;

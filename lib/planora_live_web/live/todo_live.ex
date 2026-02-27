@@ -45,15 +45,11 @@ defmodule PlanoraLiveWeb.TodoLive do
      )}
   end
 
-  # ─── SEARCH (debounced via JS hook) ─────────────────────────────────────────
-
   @impl true
   def handle_event("search", %{"value" => value}, socket) do
     socket = assign(socket, search: value, current_page: 1)
     {:noreply, reload_todos(socket)}
   end
-
-  # ─── FILTER ─────────────────────────────────────────────────────────────────
 
   @impl true
   def handle_event("filter", %{"value" => value}, socket) do
@@ -61,7 +57,6 @@ defmodule PlanoraLiveWeb.TodoLive do
     {:noreply, reload_todos(socket)}
   end
 
-  # ─── CATEGORY SELECT ────────────────────────────────────────────────────────
   # Only the <select> uses phx-change. Text inputs are uncontrolled.
   # phx-submit on the <form> captures live DOM values at submit time.
 
@@ -74,8 +69,6 @@ defmodule PlanoraLiveWeb.TodoLive do
   def handle_event("category_changed", %{"category_id" => cat_id}, socket) do
     {:noreply, assign(socket, form_category_id: cat_id)}
   end
-
-  # ─── ADD TODO (values from phx-submit params = live DOM, not stale assigns) ─
 
   @impl true
   def handle_event("add_todo", params, socket) do
@@ -145,11 +138,8 @@ defmodule PlanoraLiveWeb.TodoLive do
     end
   end
 
-  # ─── STATUS CHANGE ──────────────────────────────────────────────────────────
-
   @impl true
   def handle_event("status_change", params, socket) do
-    # params come from a mini phx-change form: {"status" => "...", "todo_id" => "..."}
     id = params["todo_id"] || params["id"] || ""
     status = params["status"] || ""
 
@@ -177,15 +167,12 @@ defmodule PlanoraLiveWeb.TodoLive do
     end
   end
 
-  # ─── TOGGLE FAVORITE ────────────────────────────────────────────────────────
-
   @impl true
   def handle_event("toggle_favorite", %{"id" => id}, socket) do
     # Fetch current todo and toggle server-side — avoids client-side boolean-string conversion bugs
     # (Elixir's ! treats 0, 1, "false" etc. as truthy, which was always sending "false")
     try do
       todo = Todos.get_todo!(String.to_integer(id), socket.assigns.user.id)
-      # negate the REAL current DB value
       new_fav = !todo.is_favorite
 
       case Todos.update_todo_favorite(todo, new_fav) do
@@ -204,8 +191,6 @@ defmodule PlanoraLiveWeb.TodoLive do
       e -> {:noreply, show_toast(socket, "Failed to update: #{Exception.message(e)}", "error")}
     end
   end
-
-  # ─── RATING ─────────────────────────────────────────────────────────────────
 
   @impl true
   def handle_event("rate_todo", %{"id" => id, "rating" => rating_str}, socket) do
@@ -230,8 +215,6 @@ defmodule PlanoraLiveWeb.TodoLive do
     end
   end
 
-  # ─── REMOVE TAG ─────────────────────────────────────────────────────────────
-
   @impl true
   def handle_event("remove_tag", %{"todo_id" => todo_id, "tag_id" => tag_id}, socket) do
     try do
@@ -251,8 +234,6 @@ defmodule PlanoraLiveWeb.TodoLive do
         {:noreply, show_toast(socket, "Failed to remove tag: #{Exception.message(e)}", "error")}
     end
   end
-
-  # ─── SELECT / DESELECT ──────────────────────────────────────────────────────
 
   @impl true
   def handle_event("toggle_select", %{"id" => id}, socket) do
@@ -278,8 +259,6 @@ defmodule PlanoraLiveWeb.TodoLive do
 
     {:noreply, assign(socket, selected_ids: new_ids)}
   end
-
-  # ─── DELETE MODAL ───────────────────────────────────────────────────────────
 
   @impl true
   def handle_event("open_delete_modal", %{"id" => id}, socket) do
@@ -308,8 +287,6 @@ defmodule PlanoraLiveWeb.TodoLive do
       e -> {:noreply, show_toast(socket, "Failed to delete: #{Exception.message(e)}", "error")}
     end
   end
-
-  # ─── BULK DELETE MODAL ──────────────────────────────────────────────────────
 
   @impl true
   def handle_event("open_bulk_modal", _params, socket) do
@@ -350,8 +327,6 @@ defmodule PlanoraLiveWeb.TodoLive do
     end
   end
 
-  # ─── EDIT MODAL ─────────────────────────────────────────────────────────────
-
   @impl true
   def handle_event("open_edit_modal", %{"id" => id}, socket) do
     todo = Todos.get_todo!(String.to_integer(id), socket.assigns.user.id)
@@ -359,7 +334,6 @@ defmodule PlanoraLiveWeb.TodoLive do
   end
 
   @impl true
-  # kept for backward compat but modal now uses phx-submit so this is rarely called
   def handle_event("update_edit_title", _params, socket) do
     {:noreply, socket}
   end
@@ -370,7 +344,6 @@ defmodule PlanoraLiveWeb.TodoLive do
   end
 
   @impl true
-  # phx-submit sends live DOM value at submit time — no stale-assign bugs
   def handle_event("confirm_edit", params, socket) do
     title = String.trim(params["edit_title"] || socket.assigns.edit_title || "")
 
@@ -397,8 +370,6 @@ defmodule PlanoraLiveWeb.TodoLive do
     end
   end
 
-  # ─── FAVORITES MODAL ────────────────────────────────────────────────────────
-
   @impl true
   def handle_event("open_favorites", _params, socket) do
     favs = Todos.get_favorite_todos(socket.assigns.user.id)
@@ -409,8 +380,6 @@ defmodule PlanoraLiveWeb.TodoLive do
   def handle_event("close_favorites", _params, socket) do
     {:noreply, assign(socket, show_favorites_modal: false)}
   end
-
-  # ─── CREATE CATEGORY ────────────────────────────────────────────────────────
 
   @impl true
   def handle_event("open_new_category", _params, socket) do
@@ -424,15 +393,12 @@ defmodule PlanoraLiveWeb.TodoLive do
   end
 
   @impl true
-  # kept for backward compat; modal now uses phx-submit so this is rarely called
   def handle_event("update_new_category", _params, socket) do
     {:noreply, socket}
   end
 
   @impl true
-  # phx-submit sends live DOM value — works even if user types and clicks Confirm immediately
   def handle_event("confirm_new_category", params, socket) do
-    # read from phx-submit params first; fall back to assign if fired via phx-click
     name = String.trim(params["new_category_name"] || socket.assigns.new_category_name || "")
 
     cond do
@@ -478,22 +444,16 @@ defmodule PlanoraLiveWeb.TodoLive do
     end
   end
 
-  # ─── PAGINATION ─────────────────────────────────────────────────────────────
-
   @impl true
   def handle_event("page", %{"page" => page}, socket) do
     socket = assign(socket, current_page: String.to_integer(page), selected_ids: [])
     {:noreply, reload_todos(socket)}
   end
 
-  # ─── TOAST CLOSE ────────────────────────────────────────────────────────────
-
   @impl true
   def handle_event("close_toast", _params, socket) do
     {:noreply, assign(socket, toast: nil)}
   end
-
-  # ─── HELPERS ────────────────────────────────────────────────────────────────
 
   defp reload_todos(socket) do
     %{user: user, current_page: page, search: search, filter: filter} = socket.assigns
@@ -523,13 +483,10 @@ defmodule PlanoraLiveWeb.TodoLive do
     {:noreply, assign(socket, toast: nil)}
   end
 
-  # ─── RENDER ─────────────────────────────────────────────────────────────────
-
   @impl true
   def render(assigns) do
     ~H"""
     <div class="app-wrapper">
-      <!-- Toast -->
       <%= if @toast do %>
         <div class={"toast toast-#{@toast_type}"}>
           <span>{@toast}</span>
@@ -538,7 +495,6 @@ defmodule PlanoraLiveWeb.TodoLive do
       <% end %>
 
       <div class="app-card">
-        <!-- Header -->
         <div class="app-header">
           <button class="header-btn bookmark-btn" phx-click="open_favorites" title="Favorites">
             <i class="far fa-bookmark"></i>
@@ -560,7 +516,6 @@ defmodule PlanoraLiveWeb.TodoLive do
 
         <p class="app-subtitle">What do you want to do today?</p>
         
-    <!-- Add Todo Form: phx-submit sends live DOM values; form_key recreates DOM on success -->
         <form id={"todo-form-#{@form_key}"} phx-submit="add_todo" class="todo-form">
           <div class="form-row">
             <label class="form-label-inline">Task Title</label>
@@ -591,7 +546,6 @@ defmodule PlanoraLiveWeb.TodoLive do
                   </option>
                 <% end %>
               </select>
-              <!-- Dedicated button — always works, no native-select event quirks -->
               <button
                 type="button"
                 id="create-category-btn"
@@ -630,7 +584,6 @@ defmodule PlanoraLiveWeb.TodoLive do
           <button type="submit" class="add-btn">ADD</button>
         </form>
         
-    <!-- Filter Bar -->
         <div class="filter-bar">
           <div class="select-all">
             <input
@@ -671,7 +624,6 @@ defmodule PlanoraLiveWeb.TodoLive do
           </div>
         </div>
         
-    <!-- Todo List -->
         <div class="todo-list">
           <%= if @todos == [] do %>
             <div class="empty-state">
@@ -698,7 +650,6 @@ defmodule PlanoraLiveWeb.TodoLive do
                         end).(String.trim(todo.description || ""))}
                     </span>
                     
-    <!-- Tags -->
                     <div class="tag-list">
                       <%= for tag <- (todo.tags || []) do %>
                         <span class="tag-chip">
@@ -715,7 +666,6 @@ defmodule PlanoraLiveWeb.TodoLive do
                       <% end %>
                     </div>
                     
-    <!-- Star Rating -->
                     <div class="star-rating">
                       <%= for i <- 1..5 do %>
                         <span class="star-group">
@@ -751,7 +701,6 @@ defmodule PlanoraLiveWeb.TodoLive do
                 </div>
 
                 <div class="todo-right">
-                  <!-- Mini-form so phx-change sends both todo_id (hidden) and status (select) -->
                   <form phx-change="status_change" class="status-form">
                     <input type="hidden" name="todo_id" value={todo.id} />
                     <select
@@ -803,7 +752,6 @@ defmodule PlanoraLiveWeb.TodoLive do
           <% end %>
         </div>
         
-    <!-- Bottom Bar: bulk delete + pagination -->
         <div class="bottom-bar">
           <button
             class={"bulk-delete-btn #{if @selected_ids == [], do: "disabled"}"}
@@ -845,7 +793,6 @@ defmodule PlanoraLiveWeb.TodoLive do
         </div>
       </div>
       
-    <!-- Delete Confirm Modal -->
       <%= if @show_delete_modal do %>
         <div class="modal-overlay">
           <div class="modal-box" phx-click-away="cancel_delete">
@@ -865,7 +812,6 @@ defmodule PlanoraLiveWeb.TodoLive do
         </div>
       <% end %>
       
-    <!-- Bulk Delete Modal -->
       <%= if @show_bulk_modal do %>
         <div class="modal-overlay">
           <div class="modal-box" phx-click-away="cancel_bulk">
@@ -886,7 +832,6 @@ defmodule PlanoraLiveWeb.TodoLive do
         </div>
       <% end %>
       
-    <!-- Edit Modal: phx-submit form captures live DOM value at submit time -->
       <%= if @show_edit_modal do %>
         <div class="modal-overlay">
           <div class="modal-box" phx-click-away="cancel_edit">
@@ -912,7 +857,6 @@ defmodule PlanoraLiveWeb.TodoLive do
         </div>
       <% end %>
       
-    <!-- Favorites Modal -->
       <%= if @show_favorites_modal do %>
         <div class="modal-overlay">
           <div class="modal-box" phx-click-away="close_favorites">
@@ -937,7 +881,6 @@ defmodule PlanoraLiveWeb.TodoLive do
         </div>
       <% end %>
       
-    <!-- New Category Modal: phx-submit form captures live input value -->
       <%= if @show_new_category_modal do %>
         <div class="modal-overlay">
           <div class="modal-box" phx-click-away="cancel_category">
@@ -964,8 +907,6 @@ defmodule PlanoraLiveWeb.TodoLive do
     </div>
     """
   end
-
-  # ─── HELPERS ────────────────────────────────────────────────────────────────
 
   defp format_changeset_error(changeset) do
     Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->

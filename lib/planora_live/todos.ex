@@ -5,7 +5,6 @@ defmodule PlanoraLive.Todos do
 
   @page_size 5
 
-  # ─── Todos ──────────────────────────────────────────────────────────────────
 
   def list_todos(user_id, opts \\ []) do
     page   = Keyword.get(opts, :page, 1)
@@ -118,7 +117,6 @@ defmodule PlanoraLive.Todos do
     |> Repo.update()
   end
 
-  # ─── Categories ─────────────────────────────────────────────────────────────
 
   def list_categories(user_id) do
     Repo.all(from c in Category, where: c.user_id == ^user_id, order_by: c.name)
@@ -130,7 +128,6 @@ defmodule PlanoraLive.Todos do
     |> Repo.insert()
   end
 
-  # ─── Tags ───────────────────────────────────────────────────────────────────
 
   defp attach_tags(todo, []), do: todo
 

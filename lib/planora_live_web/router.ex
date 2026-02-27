@@ -19,18 +19,23 @@ defmodule PlanoraLiveWeb.Router do
   end
 
   scope "/", PlanoraLiveWeb do
+    pipe_through :browser
+
+    live "/", LandingLive, :index
+  end
+
+  scope "/", PlanoraLiveWeb do
     pipe_through [:browser, :redirect_if_auth]
 
-    live "/",       AuthLive, :login
-    live "/login",  AuthLive, :login
+    live "/login", AuthLive, :login
     live "/signup", AuthLive, :signup
   end
 
   scope "/", PlanoraLiveWeb do
     pipe_through :browser
 
-    post   "/login",  SessionController, :login
-    post   "/signup", SessionController, :signup
+    post "/login", SessionController, :login
+    post "/signup", SessionController, :signup
     delete "/logout", SessionController, :logout
   end
 
@@ -40,7 +45,6 @@ defmodule PlanoraLiveWeb.Router do
     live "/todos", TodoLive, :index
   end
 
-  # LiveDashboard in development
   if Application.compile_env(:planora_live, :dev_routes) do
     import Phoenix.LiveDashboard.Router
 
